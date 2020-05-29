@@ -1,0 +1,7 @@
+bin/*
+config/*
+genesis.block
+mychannel.tx
+hedera_env.json
+configtx.yaml
+crypto-config/*
