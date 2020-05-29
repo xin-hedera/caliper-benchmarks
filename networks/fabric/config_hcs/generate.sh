@@ -30,6 +30,10 @@ TOPICS=($(echo $OUTPUT | grep -o '[0-9]\+\.[0-9\+\.[0-9]\+'))
 echo "generated HCS topics: ${TOPICS[@]}"
 sed -e 's/SYS_HCS_TOPIC_ID/'${TOPICS[0]}'/' -e 's/APP_HCS_TOPIC_ID/'${TOPICS[1]}'/' ./configtx-template.yaml > ./configtx.yaml
 
+# orderer.yaml
+sed -e 's/HEDERA_ACCOUNT_ID/'$HEDERA_ACCOUNT_ID'/' -e 's/HEDERA_ACCOUNT_PRIVATE_KEY/'$HEDERA_ACCOUNT_PRIVATE_KEY'/' \
+    ./orderer-template.yaml  > ./orderer.yaml
+
 rm -rf ./crypto-config/
 rm -f ./genesis.block
 rm -f ./mychannel.tx
