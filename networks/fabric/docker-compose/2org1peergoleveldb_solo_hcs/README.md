@@ -21,3 +21,6 @@ The configuration files names (with or without the `(-mutual)-tls` part) indicat
 *NOTE*: 
 * Prometheus metrics are only available on Fabric v1.4.0 and above
 * `docker-compose-prometheus.yaml` relies on the companion network `/prometheus-grafana/docker-compose-fabric.yml` being stood up in advance as they must exist on the same docker network
+
+*STATUS*:
+* docker-compose-tls.yaml is updated to add a cli container to facilitate channel creation, cc installation/instantiation
