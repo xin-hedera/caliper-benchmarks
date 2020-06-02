@@ -3,7 +3,7 @@
 : "${FABRIC_VERSION:=2.0.0}"
 : "${FABRIC_CA_VERSION:=1.4.6}"
 
-if [ "$HEDERA_ACCOUNT_ID" = ""  -a  "$HEDERA_ACCOUNT_PRIVATE_KEY" = "" ]; then
+if [ "$HEDERA_ACCOUNT_ID" = ""  -o  "$HEDERA_ACCOUNT_PRIVATE_KEY" = "" ]; then
     echo "must set HEDERA_ACCOUNT_ID and HEDERA_ACCOUNT_PRIVATE_KEY"
     exit 1
 fi

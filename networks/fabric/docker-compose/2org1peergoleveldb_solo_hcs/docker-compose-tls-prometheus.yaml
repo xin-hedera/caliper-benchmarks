@@ -29,8 +29,8 @@ services:
         - "7054:7054"
         command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
         volumes:
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org1.example.com/tlsca/:/etc/hyperledger/fabric-ca-server-tls
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org1.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org1.example.com/tlsca/:/etc/hyperledger/fabric-ca-server-tls
         container_name: ca.org1.example.com
 
     ca.org2.example.com:
@@ -47,8 +47,8 @@ services:
         - "8054:7054"
         command: sh -c 'fabric-ca-server start -b admin:adminpw -d'
         volumes:
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org2.example.com/tlsca/:/etc/hyperledger/fabric-ca-server-tls
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org2.example.com/ca/:/etc/hyperledger/fabric-ca-server-config
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org2.example.com/tlsca/:/etc/hyperledger/fabric-ca-server-tls
         container_name: ca.org2.example.com
 
     orderer0.example.com:
@@ -73,8 +73,9 @@ services:
         ports:
         - 7050:7050
         volumes:
-        - ../../config_solo_raft/:/etc/hyperledger/configtx
-        - ../../config_solo_raft/crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/:/etc/hyperledger/msp/orderer
+        - ../../config_solo_hcs/:/etc/hyperledger/configtx
+        - ../../config_solo_hcs/crypto-config/ordererOrganizations/example.com/orderers/orderer0.example.com/:/etc/hyperledger/msp/orderer
+        - ../../config_solo_hcs/orderer.yaml:/etc/hyperledger/fabric/orderer.yaml
         depends_on:
         - ca.org1.example.com
         - ca.org2.example.com
@@ -113,7 +114,7 @@ services:
         - 7051:7051
         volumes:
         - /var/run/:/host/var/run/
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/:/etc/hyperledger/msp/peer
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/:/etc/hyperledger/msp/peer
         depends_on:
         - orderer0.example.com
 
@@ -151,9 +152,39 @@ services:
         - 8051:7051
         volumes:
         - /var/run/:/host/var/run/
-        - ../../config_solo_raft/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/:/etc/hyperledger/msp/peer
+        - ../../config_solo_hcs/crypto-config/peerOrganizations/org2.example.com/peers/peer0.org2.example.com/:/etc/hyperledger/msp/peer
         depends_on:
         - orderer0.example.com
+
+    cli:
+        container_name: cli
+        image: hyperledger/fabric-tools:${FABRIC_VERSION}
+        tty: true
+        stdin_open: true
+        environment:
+        - GOPATH=/opt/gopath
+        - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+        - FABRIC_LOGGING_SPEC=INFO
+        - CORE_PEER_ID=cli
+        - CORE_PEER_ADDRESS=peer0.org1.example.com:7051
+        - CORE_PEER_LOCALMSPID=Org1MSP
+        - CORE_PEER_TLS_ENABLED=true
+        - CORE_PEER_TLS_CERT_FILE=/opt/gopath/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.crt
+        - CORE_PEER_TLS_KEY_FILE=/opt/gopath/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/server.key
+        - CORE_PEER_TLS_ROOTCERT_FILE=/opt/gopath/crypto/peerOrganizations/org1.example.com/peers/peer0.org1.example.com/tls/ca.crt
+        - CORE_PEER_MSPCONFIGPATH=/opt/gopath/crypto/peerOrganizations/org1.example.com/users/Admin@org1.example.com/msp
+        working_dir: /opt/gopath
+        command: /bin/bash
+        volumes:
+            - /var/run/:/host/var/run/
+            - ../../../../src/fabric/api:/opt/gopath/chaincode
+            - ../../config_solo_hcs/crypto-config:/opt/gopath/crypto
+            - ./scripts:/opt/gopath/scripts/
+            - ../../config_solo_hcs:/opt/gopath/channel-artifacts
+        depends_on:
+          - orderer0.example.com
+          - peer0.org1.example.com
+          - peer0.org2.example.com 
 
 networks:
     default:
