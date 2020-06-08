@@ -281,13 +281,22 @@ Hcs:
     # map of mainnet/testnet nodes, each entry contains NodeAddress / NodeId
     # note the following are testnet nodes
     Nodes:
-        "0_testnet_hedera_com:50211": 0.0.3
-        "1_testnet_hedera_com:50211": 0.0.4
-        "2_testnet_hedera_com:50211": 0.0.5
-        "3_testnet_hedera_com:50211": 0.0.6
+        "34_74_82_254:50211": 0.0.3
+        "35_245_216_12:50211": 0.0.4
+        "146_148_65_62:50211": 0.0.5
+        "34_83_73_160:50211": 0.0.6
+        "34_94_104_178:50211": 0.0.7
+        "35_203_2_132:50211": 0.0.8
+        "34_77_1_188:50211": 0.0.9
+        "35_246_68_126:50211": 0.0.10
+        "35_234_74_241:50211": 0.0.11
+        "35_204_223_190:50211": 0.0.12
+        "35_194_125_44:50211": 0.0.13
+        "34_97_26_91:50211": 0.0.14
+        "35_187_159_128:50211": 0.0.15
 
     # mirror node address in the format of host:port
-    MirrorNodeAddress: hcs.testnet.mirrornode.hedera.com:5600
+    MirrorNodeAddress: 34.67.159.125:5600
 
     # operator set for the orderer
     Operator:
