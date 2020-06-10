@@ -79,20 +79,54 @@ module.exports.addBatchAssets = async function(bcObj, context, clientIdx, args) 
             idx++;
         }
 
-        // -Insert each batch
-        for (const index in batches){
-            const batch = batches[index];
+        const sendBatch = function(bcObj, batch) {
+            const myArgs = {
+                chaincodeFunction: 'createAssetsFromBatch',
+                chaincodeArguments: [JSON.stringify(batch)]
+            };
+            return bcObj.invokeSmartContract(context, 'fixed-asset', undefined, myArgs, undefined, false);
+        }
+
+        let left = 0;
+        let right = batches.length - 1;
+        while (left <= right) {
+            let lbatch = batches[left];
+            let rbatch = batches[right];
+
             try {
-                const myArgs = {
-                    chaincodeFunction: 'createAssetsFromBatch',
-                    chaincodeArguments: [JSON.stringify(batch)]
-                };
-                await bcObj.invokeSmartContract(context, 'fixed-asset', undefined, myArgs, undefined, false);
+                if (left != right) {
+                    let task1 = sendBatch(bcObj, lbatch);
+                    let task2 = sendBatch(bcObj, rbatch);
+                    await task1;
+                    await task2;
+                } else {
+                    await sendBatch(bcObj, lbatch);
+                }
             } catch (err) {
                 console.error('Error: ', err);
                 throw err;
             }
+
+            left++;
+            right--;
         }
+
+        // -Insert each batch
+        //for (const index in batches){
+        //    const batch = batches[index];
+        //    try {
+        //        const myArgs = {
+        //            chaincodeFunction: 'createAssetsFromBatch',
+        //            chaincodeArguments: [JSON.stringify(batch)]
+        //        };
+        //        let p = bcObj.invokeSmartContract(context, 'fixed-asset', undefined, myArgs, undefined, false);
+        //        await p;
+        //        //await bcObj.invokeSmartContract(context, 'fixed-asset', undefined, myArgs, undefined, false);
+        //    } catch (err) {
+        //        console.error('Error: ', err);
+        //        throw err;
+        //    }
+        //}
     }
 };
 
