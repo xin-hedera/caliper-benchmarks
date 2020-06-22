@@ -125,6 +125,7 @@ Orderer: &OrdererDefaults
     Hcs:
         TopicId: SYS_HCS_TOPIC_ID
         PublicKeys:
+        ReassembleTimeout: 30s
 
     Organizations:
     Policies:
@@ -194,6 +195,7 @@ Profiles:
             Hcs:
                 TopicId: APP_HCS_TOPIC_ID
                 PublicKeys:
+                ReassembleTimeout: 30s
         Application:
             <<: *ApplicationDefaults
             Organizations:
